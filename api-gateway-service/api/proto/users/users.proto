@@ -1,0 +1,144 @@
+syntax = "proto3";
+
+package users;
+
+option go_package = "api-gateway-service/internal/pb/users_pb;users_pb";
+
+import "api/proto/default.proto";
+import "api/proto/samples/samples.proto";
+
+service UsersService {
+  rpc CreateUser(User) returns (default.DefaultResponse) {}
+  rpc GetUsers(GetUsersRequest) returns (UsersResponse) {}
+  rpc GetUser(GetUserRequest) returns (UserResponse) {}
+  rpc GetUsersByNicknamePrefix(GetUsersByNicknamePrefixRequest) returns (UsersResponse) {}
+  rpc GetUserByNickname(GetUserByNicknameRequest) returns (UserResponse) {}
+//  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {}
+  rpc UpdateUserInfo(User) returns (default.DefaultResponse) {}
+
+  rpc AddUserLink(UserLink) returns (default.DefaultResponse) {}
+  rpc GetUserLinks(GetUserLinksRequest) returns (UserLinksResponse) {}
+  rpc DeleteUserLink(DeleteUserLinkRequest) returns (default.DefaultResponse) {}
+
+//  rpc GetCurrentUserFriends(GetCurrentUserFriendsRequest) returns (GetCurrentUserFriendsResponse) {}
+  rpc GetUserFriends(GetUserFriendsRequest) returns (GetUserFriendsResponse) {}
+  rpc GetUserSentFriends(GetUserFriendsRequest) returns (GetUserFriendsResponse) {}
+  rpc GetUserRecievedFriends(GetUserFriendsRequest) returns (GetUserFriendsResponse) {}
+  rpc SendFriend(SendFriendRequest) returns (SendFriendResponse) {}
+  rpc AcceptFriend(AcceptDeclineFriendRequest) returns (default.DefaultResponse) {}
+  rpc DeclineFriend(AcceptDeclineFriendRequest) returns (default.DefaultResponse) {}
+  rpc Unfriend(UnfriendRequest) returns (default.DefaultResponse) {}
+}
+
+// User
+
+enum UserType {
+  DEFAULT = 0;
+  ADMIN = 1;
+}
+
+message User {
+  string id = 1;
+  string nickname = 2;
+  string first_name = 3;
+  string second_name = 4;
+  samples.SampleAccessType default_access_type = 5;
+  UserType user_type = 6;
+  string bio = 7;
+}
+
+message UserResponse {
+  int64 status = 1;
+  string error = 2;
+  User user = 3;
+}
+
+message UsersResponse {
+  int64 status = 1;
+  string error = 2;
+  repeated User users = 3;
+}
+
+message GetUsersRequest {
+  int64 limit = 1;
+}
+
+message GetUserRequest {
+  string id = 1;
+}
+
+message GetUsersByNicknamePrefixRequest {
+  string query = 1;
+  int64 limit = 2;
+}
+
+message GetUserByNicknameRequest {
+  string nickname = 1;
+}
+
+// Link
+
+enum LinkType {
+  CUSTOM_WEBSITE = 0;
+  SOUNDCLOUD = 1;
+  VK = 2;
+}
+
+message UserLink {
+  string id = 1;
+  LinkType type = 2;
+  string url = 3;
+  string user_id = 4;
+}
+
+message UserLinksResponse {
+  int64 status = 1;
+  string error = 2;
+  repeated UserLink user_links = 3;
+}
+
+message GetUserLinksRequest {}
+
+message DeleteUserLinkRequest {
+  string id = 1;
+}
+
+// Friends
+
+message FriendRequest {
+  string id = 1;
+  string sender_id = 2;
+  string receiver_id = 3;
+  bool is_accepted = 4;
+}
+
+message GetUserFriendsRequest {
+  string user_id = 1;
+}
+
+message GetUserFriendsResponse {
+  int64 status = 1;
+  string error = 2;
+  repeated FriendRequest friend_requests = 3;
+}
+
+message SendFriendRequest {
+  string sender_id = 1;
+  string receiver_id = 2;
+}
+
+message SendFriendResponse {
+  int64 status = 1;
+  string error = 2;
+  FriendRequest friend_request = 3;
+}
+
+message AcceptDeclineFriendRequest {
+  string user_id = 1;
+  string request_id = 2;
+}
+
+message UnfriendRequest {
+  string sender_id = 1;
+  string receiver_id = 2;
+}

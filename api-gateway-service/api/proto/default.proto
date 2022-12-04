@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package default;
+
+option go_package = "api-gateway-service/internal/pb;pb";
+
+message DefaultResponse {
+  int64 status = 1;
+  string error = 2;
+}

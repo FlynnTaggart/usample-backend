@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package samples_storage;
+
+import "api/proto/default.proto";
+
+service SampleStorageService {
+  rpc UploadSample(stream SampleStream) returns (default.DefaultResponse) {}
+  rpc GetSample(SampleIdRequest) returns (stream SampleStream) {}
+  rpc DeleteSample(SampleIdRequest) returns (default.DefaultResponse) {}
+
+  rpc UploadCover(stream SampleStream) returns (default.DefaultResponse) {}
+  rpc GetCover(CoverIdRequest) returns (stream SampleStream) {}
+  rpc DeleteCover(CoverIdRequest) returns (default.DefaultResponse) {}
+}
+
+// Sample
+
+message SampleData {
+  string id = 1;
+  string author_id = 2;
+  string file_type = 3;
+}
+
+message SampleStream {
+  oneof request {
+    SampleData sample_data = 1;
+    bytes content = 2;
+  }
+}
+
+message SampleIdRequest {
+  string id = 1;
+}
+
+// Cover
+
+message CoverData {
+  string sample_id = 1;
+  string file_type = 2;
+}
+
+message CoverStream {
+  oneof request {
+    CoverData cover_data = 1;
+    bytes content = 2;
+  }
+}
+
+message CoverIdRequest {
+  string id = 1;
+}

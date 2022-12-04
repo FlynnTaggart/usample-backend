@@ -1,0 +1,191 @@
+syntax = "proto3";
+
+package samples;
+
+option go_package = "api-gateway-service/internal/pb/samples_pb;samples_pb";
+
+import "api/proto/default.proto";
+
+service SamplesService {
+  rpc UploadSample(stream UploadSampleRequest) returns (default.DefaultResponse) {}
+  rpc GetSampleData(GetSampleRequest) returns (SampleData) {}
+  rpc GetSampleFile(GetSampleRequest) returns (stream SampleFile) {}
+  rpc GetSamples(GetSamplesRequest) returns (GetSamplesResponse) {}
+  rpc GetSamplesByNamePrefix(GetSamplesByNamePrefixRequest) returns (GetSamplesResponse) {}
+  rpc EditSampleInfo(SampleData) returns (default.DefaultResponse) {}
+  rpc DeleteSample(SampleIdRequest) returns (default.DefaultResponse) {}
+
+  rpc UploadCover(stream CoverStream) returns (default.DefaultResponse) {}
+  rpc GetCoverById(CoverIdRequest) returns (stream CoverStream) {}
+  rpc GetCoverBySampleId(SampleIdRequest) returns (stream CoverStream) {}
+  rpc DeleteCover(CoverIdRequest) returns (default.DefaultResponse) {}
+
+  rpc AddSampleUsage(SampleUsage) returns (default.DefaultResponse) {}
+  rpc DeleteSampleUsage(DeleteSampleUsageRequest) returns (default.DefaultResponse){}
+  rpc GetAllSampleUsages(GetAllSampleUsagesRequest) returns (GetAllSampleUsagesResponse) {}
+  rpc EditSampleUsage(SampleUsage) returns (default.DefaultResponse) {}
+  // likes for sample usages ????
+
+  rpc ToggleSampleLike(ToggleSampleLikeRequest) returns (default.DefaultResponse) {}
+  rpc GetSampleLikes(GetLikesRequest) returns (LikesResponse) {}
+
+  rpc AddCommentToSample(Comment) returns (default.DefaultResponse){}
+  rpc AddCommentToComment(Comment) returns (default.DefaultResponse) {}
+  rpc DeleteComment(CommentIdRequest) returns (default.DefaultResponse) {}
+  rpc EditComment(CommentIdRequest) returns (default.DefaultResponse) {}
+
+  rpc ToggleCommentLike(ToggleCommentLikeRequest) returns (default.DefaultResponse) {}
+  rpc GetCommentLikes(GetLikesRequest) returns (LikesResponse) {}
+
+}
+
+// Samples
+
+enum SampleAccessType {
+  ALL = 0;
+  FRIENDS = 1;
+  PRIVATE = 2;
+}
+
+message SampleData {
+  string sample_id = 1;
+  string name = 2;
+  string author_id = 3;
+  SampleAccessType access_type = 4;
+  string private_comment = 5;
+  string description = 6;
+  string cover_id = 7;
+}
+
+message SampleUploadData {
+  SampleData sample_data = 1;
+  string file_type = 2;
+}
+
+message UploadSampleRequest {
+  oneof request {
+    SampleUploadData sample_upload_data = 1;
+    bytes content = 2;
+  }
+}
+
+message GetSampleRequest {
+  string id = 1;
+  string author_id = 2;
+}
+
+message SampleFile {
+  oneof request {
+    string file_type = 1;
+    bytes content = 2;
+  }
+}
+
+message GetSamplesRequest {
+  int64 limit = 1;
+}
+
+message GetSamplesResponse{
+  int64 status = 1;
+  string error = 2;
+  repeated SampleData samples = 3;
+}
+
+message GetSamplesByNamePrefixRequest{
+  string query = 1;
+}
+
+message SampleIdRequest {
+  string id = 1;
+  string author_id = 2;
+}
+
+// Covers
+
+message CoverData {
+  string sample_id = 1;
+  string file_type = 2;
+}
+
+message CoverStream {
+  oneof request {
+    CoverData cover_data = 1;
+    bytes content = 2;
+  }
+}
+
+message CoverIdRequest {
+  string id = 1;
+  string author_id = 2;
+}
+
+// Sample Usages
+
+enum SampleUsageType {
+  CREATED = 0;
+  DOWNLOADED = 1;
+  USED_IN_SONG = 2;
+}
+
+message SampleUsage {
+  string id = 1;
+  SampleUsageType type = 2;
+  string user_id = 3;
+  string sample_id = 4;
+}
+
+message DeleteSampleUsageRequest {
+  string id = 1;
+  string user_id = 2;
+}
+
+message GetAllSampleUsagesRequest {
+  int64 limit = 1;
+}
+
+message GetAllSampleUsagesResponse {
+  int64 status = 1;
+  string error = 2;
+  repeated SampleUsage usages = 3;
+}
+
+// Likes ans comments
+
+message Like {
+  string id = 1;
+  string user_id = 2;
+  string comment_id = 3;
+  string sample_id = 4;
+}
+
+message Comment {
+  string id = 1;
+  string author_id = 2;
+  string text = 3;
+  string sample_id = 4;
+  string comment_id = 5;
+}
+
+message ToggleSampleLikeRequest {
+  string sample_id = 1;
+  string user_id = 2;
+}
+
+message ToggleCommentLikeRequest {
+  string comment_id = 1;
+  string user_id = 2;
+}
+
+message CommentIdRequest {
+  string id = 1;
+}
+
+message GetLikesRequest {
+  string comment_or_sample_id = 1;
+}
+
+message LikesResponse {
+  int64 status = 1;
+  string error = 2;
+  repeated Like likes = 3;
+}
