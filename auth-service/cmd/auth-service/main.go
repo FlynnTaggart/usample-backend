@@ -7,13 +7,15 @@ import (
 	"auth-service/internal/services"
 	"auth-service/pkg/logger"
 	"auth-service/utils"
+	
 	"fmt"
+	"net"
+	"os"
+
 	_ "github.com/joho/godotenv/autoload"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc"
-	"net"
-	"os"
 )
 
 func initializeLogger() *zap.Logger {

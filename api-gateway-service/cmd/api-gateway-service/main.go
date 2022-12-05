@@ -3,13 +3,15 @@ package main
 import (
 	"api-gateway-service/internal/auth"
 	"api-gateway-service/pkg/logger"
+	
 	"fmt"
+	"log"
+	"os"
+
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/joho/godotenv/autoload"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"log"
-	"os"
 )
 
 func initializeLogger() *zap.Logger {

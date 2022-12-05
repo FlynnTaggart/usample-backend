@@ -2,10 +2,12 @@ package auth
 
 import (
 	"api-gateway-service/internal/pb/auth_pb"
+
 	"context"
-	"github.com/gofiber/fiber/v2"
 	"log"
 	"strings"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 type AuthMiddlewareConfig struct {

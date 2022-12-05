@@ -3,6 +3,7 @@ package servers
 import (
 	"auth-service/internal/pb"
 	"auth-service/internal/services"
+
 	"context"
 	"net/http"
 )

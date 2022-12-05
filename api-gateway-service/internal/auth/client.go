@@ -3,6 +3,7 @@ package auth
 import (
 	"api-gateway-service/internal/pb/auth_pb"
 	"api-gateway-service/pkg/logger"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

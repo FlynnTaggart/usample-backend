@@ -4,7 +4,9 @@ import (
 	"auth-service/internal/db"
 	"auth-service/models"
 	"auth-service/utils"
+	
 	"errors"
+
 	"github.com/google/uuid"
 )
 

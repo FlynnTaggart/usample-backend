@@ -2,8 +2,10 @@ package db
 
 import (
 	"auth-service/models"
+
 	"context"
 	"errors"
+	
 	"github.com/go-redis/redis/v9"
 	"github.com/google/uuid"
 )

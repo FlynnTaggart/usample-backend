@@ -3,6 +3,7 @@ package auth
 import (
 	"api-gateway-service/internal/auth/handlers"
 	"api-gateway-service/pkg/logger"
+
 	"github.com/gofiber/fiber/v2"
 )
 
