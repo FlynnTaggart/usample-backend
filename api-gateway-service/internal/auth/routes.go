@@ -2,18 +2,17 @@ package auth
 
 import (
 	"api-gateway-service/internal/auth/handlers"
-	"api-gateway-service/pkg/zapadapter"
+	"api-gateway-service/pkg/logger"
 	"github.com/gofiber/fiber/v2"
 )
 
-func InitializeRoutes(a *fiber.App, URL string, logger zapadapter.ZapAdapter) *ServiceClient {
+func InitializeRoutes(a fiber.Router, URL string, logger logger.Logger) *ServiceClient {
 	svc := &ServiceClient{
 		Client: InitServiceClient(URL, logger),
 	}
 
-	routes := a.Group("/auth")
-	routes.Post("/register", svc.Register)
-	routes.Post("/login", svc.Login)
+	a.Post("/register", svc.Register)
+	a.Post("/login", svc.Login)
 
 	return svc
 }

@@ -1,4 +1,4 @@
-package zapadapter
+package logger
 
 import (
 	"go.uber.org/zap"
@@ -6,6 +6,10 @@ import (
 
 type ZapAdapter struct {
 	ZapLogger *zap.Logger
+}
+
+func NewZapAdapter(zapLogger *zap.Logger) *ZapAdapter {
+	return &ZapAdapter{ZapLogger: zapLogger}
 }
 
 func (a ZapAdapter) Log(lvl string, msg string, data ...map[string]interface{}) {

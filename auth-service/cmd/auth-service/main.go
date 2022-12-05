@@ -1,14 +1,18 @@
 package main
 
 import (
-	"api-gateway-service/internal/auth"
-	"api-gateway-service/pkg/logger"
+	"auth-service/internal/db"
+	"auth-service/internal/pb"
+	"auth-service/internal/servers"
+	"auth-service/internal/services"
+	"auth-service/pkg/logger"
+	"auth-service/utils"
 	"fmt"
-	"github.com/gofiber/fiber/v2"
 	_ "github.com/joho/godotenv/autoload"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"log"
+	"google.golang.org/grpc"
+	"net"
 	"os"
 )
 
@@ -29,18 +33,25 @@ func initializeLogger() *zap.Logger {
 
 func main() {
 	zapLogger := logger.NewZapAdapter(initializeLogger())
-	defer func() {
-		err := zapLogger.ZapLogger.Sync()
-		if err != nil {
-			log.Fatalf("zap: %v", err)
-		}
-	}()
 
-	app := fiber.New()
+	DB := db.NewRedisDB(os.Getenv("REDIS_URL"), os.Getenv("REDIS_PASSWORD"))
 
-	_ = auth.InitializeRoutes(app.Group("/api"), os.Getenv("AUTH_SVC_URL"), zapLogger)
+	jwt := utils.NewJwtWrapper(os.Getenv("JWT_SECRET_KEY"), "auth-service", 1)
 
-	if err := app.Listen(os.Getenv("GATEWAY_URL")); err != nil {
-		zapLogger.Fatal(fmt.Sprintf("Server is not running! Reason: %v", err))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", os.Getenv("PORT")))
+	if err != nil {
+		zapLogger.Fatal(fmt.Sprintf("main: failed to open tcp port: %v", err))
+	}
+
+	service := services.NewAuthService(*DB, *jwt)
+
+	server := servers.NewAuthServer(service)
+
+	grpcServer := grpc.NewServer()
+
+	pb.RegisterAuthServiceServer(grpcServer, server)
+
+	if err := grpcServer.Serve(lis); err != nil {
+		zapLogger.Fatal(fmt.Sprintf("main: failed to serve: %s", err.Error()))
 	}
 }
