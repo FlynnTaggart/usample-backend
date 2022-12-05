@@ -5,7 +5,7 @@ import (
 
 	"context"
 	"errors"
-	
+
 	"github.com/go-redis/redis/v9"
 	"github.com/google/uuid"
 )
@@ -33,7 +33,7 @@ func (r RedisDB) GetPasswordAndUUIDByEmail(user *models.User) error {
 	repl := r.DB.HGetAll(context.Background(), user.Email)
 
 	if repl.Err() != nil {
-		return errors.New("redis db: failed to find user")
+		return repl.Err()
 	}
 
 	values := repl.Val()

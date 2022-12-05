@@ -3,6 +3,7 @@ package servers
 import (
 	"auth-service/internal/pb"
 	"auth-service/internal/services"
+	"strings"
 
 	"context"
 	"net/http"
@@ -17,10 +18,15 @@ func NewAuthServer(service *services.AuthService) *AuthServer {
 	return &AuthServer{service: service}
 }
 
-func (s AuthServer) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
+func (s AuthServer) Register(_ context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
 	userId, err := s.service.Register(req.Email, req.Password)
 
-	if err != nil {
+	if err != nil && strings.Contains(err.Error(), "timeout") {
+		return &pb.RegisterResponse{
+			Status: http.StatusRequestTimeout,
+			Error:  err.Error(),
+		}, nil
+	} else if err != nil {
 		return &pb.RegisterResponse{
 			Status: http.StatusConflict,
 			Error:  err.Error(),
@@ -33,10 +39,15 @@ func (s AuthServer) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.
 	}, nil
 }
 
-func (s AuthServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
+func (s AuthServer) Login(_ context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
 	token, err := s.service.Login(req.Email, req.Password)
 
-	if err != nil {
+	if err != nil && strings.Contains(err.Error(), "timeout") {
+		return &pb.LoginResponse{
+			Status: http.StatusRequestTimeout,
+			Error:  err.Error(),
+		}, nil
+	} else if err != nil {
 		return &pb.LoginResponse{
 			Status: http.StatusNotFound,
 			Error:  err.Error(),
@@ -49,10 +60,15 @@ func (s AuthServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginR
 	}, nil
 }
 
-func (s AuthServer) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.ValidateResponse, error) {
+func (s AuthServer) Validate(_ context.Context, req *pb.ValidateRequest) (*pb.ValidateResponse, error) {
 	id, err := s.service.Validate(req.Token)
 
-	if err != nil {
+	if err != nil && strings.Contains(err.Error(), "timeout") {
+		return &pb.ValidateResponse{
+			Status: http.StatusRequestTimeout,
+			Error:  err.Error(),
+		}, nil
+	} else if err != nil {
 		return &pb.ValidateResponse{
 			Status: http.StatusOK,
 			Error:  err.Error(),
