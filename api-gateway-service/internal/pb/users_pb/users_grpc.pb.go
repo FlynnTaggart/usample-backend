@@ -36,7 +36,7 @@ type UsersServiceClient interface {
 	// rpc GetCurrentUserFriends(GetCurrentUserFriendsRequest) returns (GetCurrentUserFriendsResponse) {}
 	GetUserFriends(ctx context.Context, in *GetUserFriendsRequest, opts ...grpc.CallOption) (*GetUserFriendsResponse, error)
 	GetUserSentFriends(ctx context.Context, in *GetUserFriendsRequest, opts ...grpc.CallOption) (*GetUserFriendsResponse, error)
-	GetUserRecievedFriends(ctx context.Context, in *GetUserFriendsRequest, opts ...grpc.CallOption) (*GetUserFriendsResponse, error)
+	GetUserReceivedFriends(ctx context.Context, in *GetUserFriendsRequest, opts ...grpc.CallOption) (*GetUserFriendsResponse, error)
 	SendFriend(ctx context.Context, in *SendFriendRequest, opts ...grpc.CallOption) (*SendFriendResponse, error)
 	AcceptFriend(ctx context.Context, in *AcceptDeclineFriendRequest, opts ...grpc.CallOption) (*pb.DefaultResponse, error)
 	DeclineFriend(ctx context.Context, in *AcceptDeclineFriendRequest, opts ...grpc.CallOption) (*pb.DefaultResponse, error)
@@ -150,9 +150,9 @@ func (c *usersServiceClient) GetUserSentFriends(ctx context.Context, in *GetUser
 	return out, nil
 }
 
-func (c *usersServiceClient) GetUserRecievedFriends(ctx context.Context, in *GetUserFriendsRequest, opts ...grpc.CallOption) (*GetUserFriendsResponse, error) {
+func (c *usersServiceClient) GetUserReceivedFriends(ctx context.Context, in *GetUserFriendsRequest, opts ...grpc.CallOption) (*GetUserFriendsResponse, error) {
 	out := new(GetUserFriendsResponse)
-	err := c.cc.Invoke(ctx, "/users.UsersService/GetUserRecievedFriends", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/users.UsersService/GetUserReceivedFriends", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -212,7 +212,7 @@ type UsersServiceServer interface {
 	// rpc GetCurrentUserFriends(GetCurrentUserFriendsRequest) returns (GetCurrentUserFriendsResponse) {}
 	GetUserFriends(context.Context, *GetUserFriendsRequest) (*GetUserFriendsResponse, error)
 	GetUserSentFriends(context.Context, *GetUserFriendsRequest) (*GetUserFriendsResponse, error)
-	GetUserRecievedFriends(context.Context, *GetUserFriendsRequest) (*GetUserFriendsResponse, error)
+	GetUserReceivedFriends(context.Context, *GetUserFriendsRequest) (*GetUserFriendsResponse, error)
 	SendFriend(context.Context, *SendFriendRequest) (*SendFriendResponse, error)
 	AcceptFriend(context.Context, *AcceptDeclineFriendRequest) (*pb.DefaultResponse, error)
 	DeclineFriend(context.Context, *AcceptDeclineFriendRequest) (*pb.DefaultResponse, error)
@@ -257,8 +257,8 @@ func (UnimplementedUsersServiceServer) GetUserFriends(context.Context, *GetUserF
 func (UnimplementedUsersServiceServer) GetUserSentFriends(context.Context, *GetUserFriendsRequest) (*GetUserFriendsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserSentFriends not implemented")
 }
-func (UnimplementedUsersServiceServer) GetUserRecievedFriends(context.Context, *GetUserFriendsRequest) (*GetUserFriendsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserRecievedFriends not implemented")
+func (UnimplementedUsersServiceServer) GetUserReceivedFriends(context.Context, *GetUserFriendsRequest) (*GetUserFriendsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserReceivedFriends not implemented")
 }
 func (UnimplementedUsersServiceServer) SendFriend(context.Context, *SendFriendRequest) (*SendFriendResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendFriend not implemented")
@@ -483,20 +483,20 @@ func _UsersService_GetUserSentFriends_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UsersService_GetUserRecievedFriends_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UsersService_GetUserReceivedFriends_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserFriendsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UsersServiceServer).GetUserRecievedFriends(ctx, in)
+		return srv.(UsersServiceServer).GetUserReceivedFriends(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/users.UsersService/GetUserRecievedFriends",
+		FullMethod: "/users.UsersService/GetUserReceivedFriends",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServiceServer).GetUserRecievedFriends(ctx, req.(*GetUserFriendsRequest))
+		return srv.(UsersServiceServer).GetUserReceivedFriends(ctx, req.(*GetUserFriendsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -625,8 +625,8 @@ var UsersService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UsersService_GetUserSentFriends_Handler,
 		},
 		{
-			MethodName: "GetUserRecievedFriends",
-			Handler:    _UsersService_GetUserRecievedFriends_Handler,
+			MethodName: "GetUserReceivedFriends",
+			Handler:    _UsersService_GetUserReceivedFriends_Handler,
 		},
 		{
 			MethodName: "SendFriend",

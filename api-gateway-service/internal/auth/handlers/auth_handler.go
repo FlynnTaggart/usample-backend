@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"api-gateway-service/internal/pb/auth_pb"
+	"api-gateway-service/utils"
 
 	"context"
 
@@ -13,17 +14,11 @@ type EmailPasswordRequestBody struct {
 	Password string `json:"password"`
 }
 
-func returnBadRequest(err error, ctx *fiber.Ctx) error {
-	return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-		"message": err.Error(),
-	})
-}
-
 func Register(ctx *fiber.Ctx, client auth_pb.AuthServiceClient) error {
 	body := EmailPasswordRequestBody{}
 
 	if err := ctx.BodyParser(&body); err != nil {
-		return returnBadRequest(err, ctx)
+		return utils.ReturnBadRequest(err, ctx, fiber.StatusBadRequest)
 	}
 
 	res, err := client.Register(context.Background(), &auth_pb.RegisterRequest{
@@ -32,7 +27,7 @@ func Register(ctx *fiber.Ctx, client auth_pb.AuthServiceClient) error {
 	})
 
 	if err != nil {
-		return returnBadRequest(err, ctx)
+		return utils.ReturnBadRequest(err, ctx, fiber.StatusBadRequest)
 	}
 
 	return ctx.Status(int(res.Status)).JSON(res)
@@ -42,7 +37,7 @@ func Login(ctx *fiber.Ctx, client auth_pb.AuthServiceClient) error {
 	body := EmailPasswordRequestBody{}
 
 	if err := ctx.BodyParser(&body); err != nil {
-		return returnBadRequest(err, ctx)
+		return utils.ReturnBadRequest(err, ctx, fiber.StatusBadRequest)
 	}
 
 	res, err := client.Login(context.Background(), &auth_pb.LoginRequest{
@@ -51,7 +46,7 @@ func Login(ctx *fiber.Ctx, client auth_pb.AuthServiceClient) error {
 	})
 
 	if err != nil {
-		return returnBadRequest(err, ctx)
+		return utils.ReturnBadRequest(err, ctx, fiber.StatusBadRequest)
 	}
 
 	return ctx.Status(int(res.Status)).JSON(res)

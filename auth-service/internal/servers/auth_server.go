@@ -19,6 +19,13 @@ func NewAuthServer(service *services.AuthService) *AuthServer {
 }
 
 func (s AuthServer) Register(_ context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
+	if len(req.Password) == 0 || len(req.Email) == 0 {
+		return &pb.RegisterResponse{
+			Status: http.StatusBadRequest,
+			Error:  "auth server: register: empty email or password",
+		}, nil
+	}
+
 	userId, err := s.service.Register(req.Email, req.Password)
 
 	if err != nil && strings.Contains(err.Error(), "timeout") {
@@ -40,6 +47,13 @@ func (s AuthServer) Register(_ context.Context, req *pb.RegisterRequest) (*pb.Re
 }
 
 func (s AuthServer) Login(_ context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
+	if len(req.Password) == 0 || len(req.Email) == 0 {
+		return &pb.LoginResponse{
+			Status: http.StatusBadRequest,
+			Error:  "auth server: register: empty email or password",
+		}, nil
+	}
+
 	token, err := s.service.Login(req.Email, req.Password)
 
 	if err != nil && strings.Contains(err.Error(), "timeout") {

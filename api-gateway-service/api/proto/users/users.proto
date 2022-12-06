@@ -23,7 +23,7 @@ service UsersService {
 //  rpc GetCurrentUserFriends(GetCurrentUserFriendsRequest) returns (GetCurrentUserFriendsResponse) {}
   rpc GetUserFriends(GetUserFriendsRequest) returns (GetUserFriendsResponse) {}
   rpc GetUserSentFriends(GetUserFriendsRequest) returns (GetUserFriendsResponse) {}
-  rpc GetUserRecievedFriends(GetUserFriendsRequest) returns (GetUserFriendsResponse) {}
+  rpc GetUserReceivedFriends(GetUserFriendsRequest) returns (GetUserFriendsResponse) {}
   rpc SendFriend(SendFriendRequest) returns (SendFriendResponse) {}
   rpc AcceptFriend(AcceptDeclineFriendRequest) returns (default.DefaultResponse) {}
   rpc DeclineFriend(AcceptDeclineFriendRequest) returns (default.DefaultResponse) {}
@@ -61,6 +61,7 @@ message UsersResponse {
 
 message GetUsersRequest {
   int64 limit = 1;
+  int64 offset = 2;
 }
 
 message GetUserRequest {
@@ -70,6 +71,7 @@ message GetUserRequest {
 message GetUsersByNicknamePrefixRequest {
   string query = 1;
   int64 limit = 2;
+  int64 offset = 3;
 }
 
 message GetUserByNicknameRequest {
