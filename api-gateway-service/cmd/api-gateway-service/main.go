@@ -5,6 +5,8 @@ import (
 	"api-gateway-service/internal/auth/handlers"
 	"api-gateway-service/internal/users"
 	"api-gateway-service/pkg/logger"
+	"errors"
+	"strings"
 
 	"fmt"
 	"io"
@@ -29,15 +31,22 @@ func initializeLogger(logFile *os.File) *logrus.Logger {
 }
 
 func main() {
-	f, err := os.OpenFile("log.txt", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	logPath := strings.TrimRight(os.Getenv("LOG_DIR"), "/")
+	if _, err := os.Stat(logPath); errors.Is(err, os.ErrNotExist) {
+		err := os.Mkdir(logPath, os.ModePerm)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+	f, err := os.OpenFile(logPath+"/"+os.Getenv("LOG_FILENAME"), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
-		fmt.Println("Failed to create logfile" + "log.txt")
+		fmt.Println("Failed to create logfile " + logPath + "/" + os.Getenv("LOG_FILENAME"))
 		panic(err)
 	}
 	defer func(f *os.File) {
 		err := f.Close()
 		if err != nil {
-
+			fmt.Println("Failed to close logfile " + logPath + "/" + os.Getenv("LOG_FILENAME"))
 		}
 	}(f)
 

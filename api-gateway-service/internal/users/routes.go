@@ -21,7 +21,7 @@ func InitializeUsersRoutes(a fiber.Router, URL string, logger logger.Logger, aut
 	getUsersGroup.Get("/:id", svc.GetUser)
 	getUsersGroup.Get("/prefix", svc.GetUsersByNicknamePrefix)
 	getUsersGroup.Get("/nickname", svc.GetUserByNickname)
-	getUsersGroup.Group("/create").Use(m.AuthRequired)
+	getUsersGroup.Group("/create", m.AuthRequired).Post("/", svc.CreateUser) // need authorization for user creation
 
 	return svc
 }

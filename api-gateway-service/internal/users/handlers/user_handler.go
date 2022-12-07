@@ -35,7 +35,7 @@ func CreateUser(ctx *fiber.Ctx, client users_pb.UsersServiceClient) error {
 	res, err := client.CreateUser(context.Background(), &body)
 
 	if err != nil {
-		return utils.ReturnBadRequest(err, ctx, fiber.StatusBadRequest)
+		return utils.ReturnBadRequest(err, ctx, fiber.StatusBadGateway)
 	}
 
 	return ctx.SendStatus(int(res.Status))
