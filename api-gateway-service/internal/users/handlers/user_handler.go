@@ -30,6 +30,8 @@ func CreateUser(ctx *fiber.Ctx, client users_pb.UsersServiceClient) error {
 		return utils.ReturnBadRequest(err, ctx, fiber.StatusBadRequest)
 	}
 
+	body.Id = fmt.Sprintf("%v", ctx.Locals("userId"))
+
 	res, err := client.CreateUser(context.Background(), &body)
 
 	if err != nil {

@@ -4,8 +4,6 @@ import (
 	"api-gateway-service/internal/pb/samples_pb"
 	"api-gateway-service/internal/pb/users_pb"
 	"errors"
-	"fmt"
-	"github.com/google/uuid"
 )
 
 func ValidateUserType(userType users_pb.UserType) error {
@@ -25,17 +23,10 @@ func ValidateSampleAccessType(accessType samples_pb.SampleAccessType) error {
 }
 
 func ValidateUser(user *users_pb.User) error {
-	if len(user.Id) == 0 {
-		return errors.New("validate user: empty user id")
-	}
 	if len(user.Nickname) == 0 {
 		return errors.New("validate user: empty user nickname")
 	}
-	_, err := uuid.Parse(user.Id)
-	if err != nil {
-		return fmt.Errorf("validate user: invalid user id: %v", err.Error())
-	}
-	err = ValidateUserType(user.UserType)
+	err := ValidateUserType(user.UserType)
 	if err != nil {
 		return err
 	}

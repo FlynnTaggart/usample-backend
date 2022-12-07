@@ -2,9 +2,9 @@ package auth
 
 import (
 	"api-gateway-service/internal/pb/auth_pb"
+	"api-gateway-service/pkg/logger"
 
 	"context"
-	"log"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -12,32 +12,24 @@ import (
 
 type AuthMiddlewareConfig struct {
 	svc    *ServiceClient
-	logger *log.Logger
+	logger logger.Logger
 }
 
-func InitAuthMiddleware(svc *ServiceClient, logger *log.Logger) AuthMiddlewareConfig {
+func InitAuthMiddleware(svc *ServiceClient, logger logger.Logger) AuthMiddlewareConfig {
 	return AuthMiddlewareConfig{svc: svc, logger: logger}
 }
 
-func (c *AuthMiddlewareConfig) AuthRequired(ctx *fiber.Ctx) {
+func (c *AuthMiddlewareConfig) AuthRequired(ctx *fiber.Ctx) error {
 	authorization := ctx.GetReqHeaders()["Authorization"]
 
 	if authorization == "" {
-		err := ctx.SendStatus(fiber.StatusUnauthorized)
-		if err != nil {
-			c.logger.Println(err.Error())
-		}
-		return
+		return ctx.SendStatus(fiber.StatusUnauthorized)
 	}
 
 	token := strings.Split(authorization, "Bearer ")
 
 	if len(token) < 2 {
-		err := ctx.SendStatus(fiber.StatusUnauthorized)
-		if err != nil {
-			c.logger.Println(err.Error())
-		}
-		return
+		return ctx.SendStatus(fiber.StatusUnauthorized)
 	}
 
 	res, err := c.svc.Client.Validate(context.Background(), &auth_pb.ValidateRequest{
@@ -45,22 +37,14 @@ func (c *AuthMiddlewareConfig) AuthRequired(ctx *fiber.Ctx) {
 	})
 
 	if err != nil || res.Status != fiber.StatusOK {
-		err = ctx.SendStatus(fiber.StatusUnauthorized)
-		if err != nil {
-			c.logger.Println(err.Error())
-		}
-		return
+		return ctx.SendStatus(fiber.StatusUnauthorized)
 	}
 
 	ctx.Locals("userId", res.UserId)
 
 	err = ctx.Next()
 	if err != nil {
-		c.logger.Println(err.Error())
-		err = ctx.SendStatus(fiber.StatusUnauthorized)
-		if err != nil {
-			c.logger.Println(err.Error())
-		}
-		return
+		return ctx.SendStatus(fiber.StatusUnauthorized)
 	}
+	return nil
 }
