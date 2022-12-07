@@ -7,34 +7,44 @@ import (
 	"auth-service/internal/services"
 	"auth-service/pkg/logger"
 	"auth-service/utils"
-	
+	"github.com/sirupsen/logrus"
+	easy "github.com/t-tomalak/logrus-easy-formatter"
+	"io"
+
 	"fmt"
 	"net"
 	"os"
 
 	_ "github.com/joho/godotenv/autoload"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc"
 )
 
-func initializeLogger() *zap.Logger {
-	config := zap.NewDevelopmentEncoderConfig()
-	config.EncodeTime = zapcore.ISO8601TimeEncoder
-	fileEncoder := zapcore.NewJSONEncoder(config)
-	consoleEncoder := zapcore.NewConsoleEncoder(config)
-	logFile, _ := os.OpenFile("./logs/server.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	writer := zapcore.AddSync(logFile)
-	defaultLogLevel := zapcore.DebugLevel
-	core := zapcore.NewTee(
-		zapcore.NewCore(fileEncoder, writer, defaultLogLevel),
-		zapcore.NewCore(consoleEncoder, zapcore.AddSync(os.Stdout), defaultLogLevel),
-	)
-	return zap.New(core, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
+func initializeLogger(logFile *os.File) *logrus.Logger {
+	log := &logrus.Logger{
+		Out:   io.MultiWriter(logFile, os.Stdout),
+		Level: logrus.DebugLevel,
+		Formatter: &easy.Formatter{
+			TimestampFormat: "2006-01-02 15:04:05",
+			LogFormat:       "[%lvl%]: %time% - %msg%\n",
+		},
+	}
+	return log
 }
 
 func main() {
-	zapLogger := logger.NewZapAdapter(initializeLogger())
+	f, err := os.OpenFile("log.txt", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	if err != nil {
+		fmt.Println("Failed to create logfile" + "log.txt")
+		panic(err)
+	}
+	defer func(f *os.File) {
+		err := f.Close()
+		if err != nil {
+
+		}
+	}(f)
+
+	logrusLogger := logger.NewLogrusAdapter(initializeLogger(f))
 
 	DB := db.NewRedisDB(os.Getenv("REDIS_URL"), os.Getenv("REDIS_PASSWORD"))
 
@@ -42,7 +52,7 @@ func main() {
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", os.Getenv("PORT")))
 	if err != nil {
-		zapLogger.Fatal(fmt.Sprintf("main: failed to open tcp port: %v", err))
+		logrusLogger.Fatal(fmt.Sprintf("main: failed to open tcp port: %v", err), map[string]interface{}{})
 	}
 
 	service := services.NewAuthService(*DB, *jwt)
@@ -54,6 +64,6 @@ func main() {
 	pb.RegisterAuthServiceServer(grpcServer, server)
 
 	if err := grpcServer.Serve(lis); err != nil {
-		zapLogger.Fatal(fmt.Sprintf("main: failed to serve: %s", err.Error()))
+		logrusLogger.Fatal(fmt.Sprintf("main: failed to serve: %s", err.Error()), map[string]interface{}{})
 	}
 }
