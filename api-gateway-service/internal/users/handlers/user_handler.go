@@ -3,11 +3,21 @@ package handlers
 import (
 	"api-gateway-service/internal/pb/users_pb"
 	"api-gateway-service/utils"
-	"api-gateway-service/utils/validate"
+	"api-gateway-service/utils/validator"
 	"context"
 	"errors"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 )
+
+func CheckAuthorizationId(ctx *fiber.Ctx, reqId string) error {
+	curUserId := fmt.Sprintf("%v", ctx.Locals("userId"))
+
+	if curUserId != reqId {
+		return utils.ReturnBadRequest(errors.New("gateway: wrong user id"), ctx, fiber.StatusForbidden)
+	}
+	return nil
+}
 
 func CreateUser(ctx *fiber.Ctx, client users_pb.UsersServiceClient) error {
 	body := users_pb.User{}
@@ -16,7 +26,7 @@ func CreateUser(ctx *fiber.Ctx, client users_pb.UsersServiceClient) error {
 		return utils.ReturnBadRequest(err, ctx, fiber.StatusBadRequest)
 	}
 
-	if err := validate.ValidateUser(&body); err != nil {
+	if err := validator.ValidateUser(&body); err != nil {
 		return utils.ReturnBadRequest(err, ctx, fiber.StatusBadRequest)
 	}
 
@@ -48,7 +58,7 @@ func GetUsers(ctx *fiber.Ctx, client users_pb.UsersServiceClient) error {
 func GetUser(ctx *fiber.Ctx, client users_pb.UsersServiceClient) error {
 	id := ctx.Params("id")
 
-	if len(id) == 0 || !validate.ValidateUUID(id) {
+	if len(id) == 0 || !validator.ValidateUUID(id) {
 		return utils.ReturnBadRequest(errors.New("gateway: get user: invalid id"), ctx, fiber.StatusBadRequest)
 	}
 
@@ -102,11 +112,16 @@ func UpdateUserInfo(ctx *fiber.Ctx, client users_pb.UsersServiceClient) error {
 		return utils.ReturnBadRequest(err, ctx, fiber.StatusBadRequest)
 	}
 
-	if err := validate.ValidateUser(&body); err != nil {
+	if err := validator.ValidateUser(&body); err != nil {
 		return utils.ReturnBadRequest(err, ctx, fiber.StatusBadRequest)
 	}
 
-	res, err := client.CreateUser(context.Background(), &body)
+	err := CheckAuthorizationId(ctx, body.Id)
+	if err != nil {
+		return err
+	}
+
+	res, err := client.UpdateUserInfo(context.Background(), &body)
 
 	if err != nil {
 		return utils.ReturnBadRequest(err, ctx, fiber.StatusBadRequest)

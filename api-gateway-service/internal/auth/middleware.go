@@ -52,7 +52,7 @@ func (c *AuthMiddlewareConfig) AuthRequired(ctx *fiber.Ctx) {
 		return
 	}
 
-	ctx.Set("userId", res.UserId)
+	ctx.Locals("userId", res.UserId)
 
 	err = ctx.Next()
 	if err != nil {
