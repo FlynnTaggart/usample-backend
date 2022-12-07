@@ -21,7 +21,7 @@ func InitializeUsersRoutes(a fiber.Router, URL string, logger logger.Logger, aut
 	getUsersGroup.Get("/:id", svc.GetUser)
 	getUsersGroup.Get("/prefix", svc.GetUsersByNicknamePrefix)
 	getUsersGroup.Get("/nickname", svc.GetUserByNickname)
-	getUsersGroup.Get("/friends", svc.GetUserByNickname)
+	getUsersGroup.Get("/:id/friends", svc.GetUserFriends)
 
 	protectedUsersGroup := getUsersGroup.Group("/protected", m.AuthRequired)
 	protectedUsersGroup.Post("/", svc.CreateUser)
@@ -76,6 +76,10 @@ func (svc ServiceClient) GetUserLinks(ctx *fiber.Ctx) error {
 
 func (svc ServiceClient) DeleteUserLink(ctx *fiber.Ctx) error {
 	return handlers.DeleteUserLink(ctx, svc.Client)
+}
+
+func (svc ServiceClient) GetUserFriends(ctx *fiber.Ctx) error {
+	return handlers.GetUserFriends(ctx, svc.Client)
 }
 
 func (svc ServiceClient) GetUserSentFriends(ctx *fiber.Ctx) error {

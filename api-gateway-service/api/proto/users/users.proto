@@ -27,6 +27,7 @@ service UsersService {
   rpc SendFriend(SendFriendRequest) returns (SendFriendResponse) {}
   rpc AcceptFriend(AcceptDeclineFriendRequest) returns (default.DefaultResponse) {}
   rpc DeclineFriend(AcceptDeclineFriendRequest) returns (default.DefaultResponse) {}
+  rpc Unfriend(UnfriendRequest) returns (default.DefaultResponse) {}
 }
 
 // User

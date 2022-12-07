@@ -11,9 +11,13 @@ import (
 )
 
 func GetUserFriends(ctx *fiber.Ctx, client users_pb.UsersServiceClient) error {
-	userId := fmt.Sprintf("%v", ctx.Locals("userId"))
+	id := ctx.Params("id")
 
-	res, err := client.GetUserFriends(context.Background(), &users_pb.GetUserFriendsRequest{UserId: userId})
+	if len(id) == 0 || !validator.ValidateUUID(id) {
+		return utils.ReturnBadRequest(errors.New("gateway: get user friends: invalid id"), ctx, fiber.StatusBadRequest)
+	}
+
+	res, err := client.GetUserFriends(context.Background(), &users_pb.GetUserFriendsRequest{UserId: id})
 
 	if err != nil {
 		return utils.ReturnBadRequest(err, ctx, fiber.StatusBadRequest)
