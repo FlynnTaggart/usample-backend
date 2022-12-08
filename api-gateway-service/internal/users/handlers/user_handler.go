@@ -98,6 +98,10 @@ func GetUserByNickname(ctx *fiber.Ctx, client users_pb.UsersServiceClient) error
 		return utils.ReturnBadRequest(err, ctx, fiber.StatusBadRequest)
 	}
 
+	if len(body.Nickname) == 0 {
+		return utils.ReturnBadRequest(errors.New("gateway: get user by nickname: empty nickname"), ctx, fiber.StatusBadRequest)
+	}
+
 	res, err := client.GetUserByNickname(context.Background(), &body)
 
 	if err != nil {

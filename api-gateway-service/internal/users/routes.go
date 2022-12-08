@@ -25,7 +25,7 @@ func InitializeUsersRoutes(a fiber.Router, URL string, logger logger.Logger, aut
 
 	protectedUsersGroup := getUsersGroup.Group("/protected", m.AuthRequired)
 	protectedUsersGroup.Post("/", svc.CreateUser)
-	protectedUsersGroup.Patch("/", svc.UpdateUserInfo)
+	protectedUsersGroup.Put("/", svc.UpdateUserInfo)
 
 	userLinkGroup := protectedUsersGroup.Group("/links")
 	userLinkGroup.Post("/", svc.AddUserLink)

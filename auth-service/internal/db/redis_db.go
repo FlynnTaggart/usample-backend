@@ -1,8 +1,7 @@
 package db
 
 import (
-	"auth-service/models"
-
+	"auth-service/internal/models"
 	"context"
 	"errors"
 

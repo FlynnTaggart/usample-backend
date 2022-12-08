@@ -1,8 +1,7 @@
 package utils
 
 import (
-	"auth-service/models"
-
+	"auth-service/internal/models"
 	"errors"
 	"time"
 

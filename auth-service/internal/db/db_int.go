@@ -1,6 +1,8 @@
 package db
 
-import "auth-service/models"
+import (
+	"auth-service/internal/models"
+)
 
 type DB interface {
 	CreateUserRecord(user models.User) error
