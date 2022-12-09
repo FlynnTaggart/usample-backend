@@ -6,6 +6,7 @@ import (
 	"api-gateway-service/internal/users"
 	"api-gateway-service/pkg/logger"
 	"errors"
+	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 	"strings"
 
 	"fmt"
@@ -15,16 +16,17 @@ import (
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/sirupsen/logrus"
-	easy "github.com/t-tomalak/logrus-easy-formatter"
 )
 
 func initializeLogger(logFile *os.File) *logrus.Logger {
 	log := &logrus.Logger{
 		Out:   io.MultiWriter(logFile, os.Stdout),
 		Level: logrus.DebugLevel,
-		Formatter: &easy.Formatter{
+		Formatter: &prefixed.TextFormatter{
+			DisableColors:   false,
 			TimestampFormat: "2006-01-02 15:04:05",
-			LogFormat:       "[%lvl%]: %time% - %msg%\n",
+			FullTimestamp:   true,
+			ForceFormatting: true,
 		},
 	}
 	return log

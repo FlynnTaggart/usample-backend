@@ -9,7 +9,7 @@ import (
 	"auth-service/utils"
 	"errors"
 	"github.com/sirupsen/logrus"
-	easy "github.com/t-tomalak/logrus-easy-formatter"
+	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 	"io"
 	"strings"
 
@@ -25,9 +25,11 @@ func initializeLogger(logFile *os.File) *logrus.Logger {
 	log := &logrus.Logger{
 		Out:   io.MultiWriter(logFile, os.Stdout),
 		Level: logrus.DebugLevel,
-		Formatter: &easy.Formatter{
+		Formatter: &prefixed.TextFormatter{
+			DisableColors:   false,
 			TimestampFormat: "2006-01-02 15:04:05",
-			LogFormat:       "[%lvl%]: %time% - %msg%\n",
+			FullTimestamp:   true,
+			ForceFormatting: true,
 		},
 	}
 	return log

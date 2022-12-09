@@ -40,6 +40,8 @@ services:
     image: usample-api-gateway
     restart: always
     env_file: api-gateway-service/.env
+    volumes:
+      - ./api-gateway-service/logs:/logs
     ports:
       - "1337:1337"
 
@@ -50,6 +52,8 @@ services:
     image: usample-auth
     restart: always
     env_file: auth-service/.env
+    volumes:
+      - ./auth-service/logs:/logs
     ports:
       - "13371:13371"
 
@@ -60,6 +64,8 @@ services:
     image: usample-users
     restart: always
     env_file: users-service/.env
+    volumes:
+      - ./users-service/logs:/logs
     ports:
       - "13372:13372"
 

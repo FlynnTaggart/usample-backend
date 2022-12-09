@@ -3,18 +3,21 @@ package db
 import (
 	"context"
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v4"
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5/tracelog"
 	"user-service/internal/models"
 )
 
 type PgxDB struct {
 	*pgxpool.Pool
+	Logger tracelog.Logger
 }
 
-func NewPgxDB(pool *pgxpool.Pool) *PgxDB {
+func NewPgxDB(pool *pgxpool.Pool, logger tracelog.Logger) *PgxDB {
 	return &PgxDB{
-		Pool: pool,
+		Pool:   pool,
+		Logger: logger,
 	}
 }
 
@@ -61,7 +64,14 @@ func (p PgxDB) GetUsers(limit, page int64) ([]*models.User, error) {
 
 	for rows.Next() {
 		u := &models.User{}
-		err = rows.Scan(u)
+		err = rows.Scan(
+			&u.Id,
+			&u.Nickname,
+			&u.FirstName,
+			&u.SecondName,
+			&u.DefaultAccessType,
+			&u.UserType,
+			&u.Bio)
 		if err != nil {
 			return nil, err
 		}
@@ -75,11 +85,19 @@ func (p PgxDB) GetUser(id uuid.UUID) (*models.User, error) {
 	ctx := context.Background()
 
 	u := &models.User{}
-	err := p.QueryRow(ctx, `select * from users where id = $1`, id).Scan(u)
+	err := p.QueryRow(ctx, `select * from users where id = $1`, id).Scan(
+		&u.Id,
+		&u.Nickname,
+		&u.FirstName,
+		&u.SecondName,
+		&u.DefaultAccessType,
+		&u.UserType,
+		&u.Bio)
 	if err != nil {
 		return nil, err
 	}
 
+	p.Logger.Log(ctx, tracelog.LogLevelError, u.Nickname, map[string]interface{}{})
 	return u, nil
 }
 
@@ -95,7 +113,14 @@ func (p PgxDB) GetUsersByNicknamePrefix(prefix string, limit, page int64) ([]*mo
 
 	for rows.Next() {
 		u := &models.User{}
-		err = rows.Scan(&u)
+		err = rows.Scan(
+			&u.Id,
+			&u.Nickname,
+			&u.FirstName,
+			&u.SecondName,
+			&u.DefaultAccessType,
+			&u.UserType,
+			&u.Bio)
 		if err != nil {
 			return nil, err
 		}
@@ -109,7 +134,14 @@ func (p PgxDB) GetUserByNickname(nickname string) (*models.User, error) {
 	ctx := context.Background()
 
 	u := &models.User{}
-	err := p.QueryRow(ctx, `select * from users where nickname = $1`, nickname).Scan(u)
+	err := p.QueryRow(ctx, `select * from users where nickname = $1`, nickname).Scan(
+		&u.Id,
+		&u.Nickname,
+		&u.FirstName,
+		&u.SecondName,
+		&u.DefaultAccessType,
+		&u.UserType,
+		&u.Bio)
 	if err != nil {
 		return nil, err
 	}
@@ -150,12 +182,12 @@ func (p PgxDB) GetUserFriends(id uuid.UUID) ([]*models.FriendRequest, error) {
 	var res []*models.FriendRequest
 
 	for rows.Next() {
-		u := &models.FriendRequest{}
-		err = rows.Scan(&u)
+		f := &models.FriendRequest{}
+		err = rows.Scan(&f.Id, &f.SenderId, &f.ReceiverId, &f.IsAccepted)
 		if err != nil {
 			return nil, err
 		}
-		res = append(res, u)
+		res = append(res, f)
 	}
 
 	return res, nil
@@ -171,12 +203,12 @@ func (p PgxDB) GetUserSentFriends(id uuid.UUID) ([]*models.FriendRequest, error)
 	var res []*models.FriendRequest
 
 	for rows.Next() {
-		u := &models.FriendRequest{}
-		err = rows.Scan(&u)
+		f := &models.FriendRequest{}
+		err = rows.Scan(&f.Id, &f.SenderId, &f.ReceiverId, &f.IsAccepted)
 		if err != nil {
 			return nil, err
 		}
-		res = append(res, u)
+		res = append(res, f)
 	}
 
 	return res, nil
@@ -192,12 +224,12 @@ func (p PgxDB) GetUserReceivedFriends(id uuid.UUID) ([]*models.FriendRequest, er
 	var res []*models.FriendRequest
 
 	for rows.Next() {
-		u := &models.FriendRequest{}
-		err = rows.Scan(&u)
+		f := &models.FriendRequest{}
+		err = rows.Scan(&f.Id, &f.SenderId, &f.ReceiverId, &f.IsAccepted)
 		if err != nil {
 			return nil, err
 		}
-		res = append(res, u)
+		res = append(res, f)
 	}
 
 	return res, nil
@@ -220,19 +252,19 @@ func (p PgxDB) AddUserLink(link *models.UserLink) error {
 func (p PgxDB) GetUserLinks() ([]*models.UserLink, error) {
 	ctx := context.Background()
 
-	rows, err := p.Query(ctx, `select * from users order by nickname`)
+	rows, err := p.Query(ctx, `select * from user_links order by link_type, link_url`)
 	if err != nil {
 		return nil, err
 	}
 	var res []*models.UserLink
 
 	for rows.Next() {
-		u := &models.UserLink{}
-		err = rows.Scan(u)
+		l := &models.UserLink{}
+		err = rows.Scan(&l.Id, &l.Type, &l.Url, &l.UserId)
 		if err != nil {
 			return nil, err
 		}
-		res = append(res, u)
+		res = append(res, l)
 	}
 
 	return res, nil
