@@ -22,8 +22,8 @@ func (s UsersServer) CreateUser(_ context.Context, req *pb.User) (*pb.DefaultRes
 		Nickname:          req.Nickname,
 		FirstName:         req.FirstName,
 		SecondName:        req.SecondName,
-		DefaultAccessType: req.DefaultAccessType,
-		UserType:          req.UserType,
+		DefaultAccessType: models.SampleAccessType(req.DefaultAccessType),
+		UserType:          models.UserType(req.UserType),
 		Bio:               req.Bio,
 	}
 
@@ -63,8 +63,8 @@ func (s UsersServer) GetUsers(_ context.Context, req *pb.GetUsersRequest) (*pb.U
 			Nickname:          v.Nickname,
 			FirstName:         v.FirstName,
 			SecondName:        v.SecondName,
-			DefaultAccessType: v.DefaultAccessType,
-			UserType:          v.UserType,
+			DefaultAccessType: pb.SampleAccessType(v.DefaultAccessType),
+			UserType:          pb.UserType(v.UserType),
 			Bio:               v.Bio,
 		})
 	}
@@ -93,8 +93,8 @@ func (s UsersServer) GetUser(_ context.Context, req *pb.GetUserRequest) (*pb.Use
 		Nickname:          res.Nickname,
 		FirstName:         res.FirstName,
 		SecondName:        res.SecondName,
-		DefaultAccessType: res.DefaultAccessType,
-		UserType:          res.UserType,
+		DefaultAccessType: pb.SampleAccessType(res.DefaultAccessType),
+		UserType:          pb.UserType(res.UserType),
 		Bio:               res.Bio,
 	}
 
@@ -123,8 +123,8 @@ func (s UsersServer) GetUsersByNicknamePrefix(_ context.Context, req *pb.GetUser
 			Nickname:          v.Nickname,
 			FirstName:         v.FirstName,
 			SecondName:        v.SecondName,
-			DefaultAccessType: v.DefaultAccessType,
-			UserType:          v.UserType,
+			DefaultAccessType: pb.SampleAccessType(v.DefaultAccessType),
+			UserType:          pb.UserType(v.UserType),
 			Bio:               v.Bio,
 		})
 	}
@@ -152,8 +152,8 @@ func (s UsersServer) GetUserByNickname(_ context.Context, req *pb.GetUserByNickn
 		Nickname:          res.Nickname,
 		FirstName:         res.FirstName,
 		SecondName:        res.SecondName,
-		DefaultAccessType: res.DefaultAccessType,
-		UserType:          res.UserType,
+		DefaultAccessType: pb.SampleAccessType(res.DefaultAccessType),
+		UserType:          pb.UserType(res.UserType),
 		Bio:               res.Bio,
 	}
 
@@ -174,8 +174,8 @@ func (s UsersServer) UpdateUserInfo(_ context.Context, req *pb.User) (*pb.Defaul
 		Nickname:          req.Nickname,
 		FirstName:         req.FirstName,
 		SecondName:        req.SecondName,
-		DefaultAccessType: req.DefaultAccessType,
-		UserType:          req.UserType,
+		DefaultAccessType: models.SampleAccessType(req.DefaultAccessType),
+		UserType:          models.UserType(req.UserType),
 		Bio:               req.Bio,
 	}
 

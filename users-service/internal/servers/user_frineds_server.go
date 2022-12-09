@@ -125,6 +125,13 @@ func (s UsersServer) SendFriend(_ context.Context, req *pb.SendFriendRequest) (*
 		}, nil
 	}
 
+	if senderId == receiverId {
+		return &pb.SendFriendResponse{
+			Status: http.StatusBadRequest,
+			Error:  "user service: sender and receiver id could not be the same",
+		}, nil
+	}
+
 	res, err := s.service.SendFriend(senderId, receiverId)
 	if err != nil {
 		return &pb.SendFriendResponse{

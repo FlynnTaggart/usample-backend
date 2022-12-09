@@ -2,7 +2,30 @@ package models
 
 import (
 	"github.com/google/uuid"
-	"user-service/internal/pb"
+)
+
+type SampleAccessType int32
+
+const (
+	ALL SampleAccessType = iota
+	FRIENDS
+	PRIVATE
+)
+
+type UserType int32
+
+const (
+	DEFAULT UserType = iota
+	ADMIN
+)
+
+type LinkType int32
+
+//goland:noinspection GoSnakeCaseUsage
+const (
+	CUSTOM_WEBSITE LinkType = iota
+	SOUNDCLOUD
+	VK
 )
 
 type User struct {
@@ -10,14 +33,14 @@ type User struct {
 	Nickname          string
 	FirstName         string
 	SecondName        string
-	DefaultAccessType pb.SampleAccessType
-	UserType          pb.UserType
+	DefaultAccessType SampleAccessType
+	UserType          UserType
 	Bio               string
 }
 
 type UserLink struct {
 	Id     uuid.UUID
-	Type   pb.LinkType
+	Type   LinkType
 	Url    string
 	UserId uuid.UUID
 }

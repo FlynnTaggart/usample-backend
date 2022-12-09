@@ -19,7 +19,7 @@ func (s UsersServer) AddUserLink(_ context.Context, req *pb.UserLink) (*pb.Defau
 
 	link := &models.UserLink{
 		Url:    req.Url,
-		Type:   req.Type,
+		Type:   models.LinkType(req.Type),
 		UserId: userId,
 	}
 
@@ -53,7 +53,7 @@ func (s UsersServer) GetUserLinks(_ context.Context, req *pb.GetUserLinksRequest
 	for _, v := range res {
 		resp.UserLinks = append(resp.UserLinks, &pb.UserLink{
 			Id:     v.Id.String(),
-			Type:   v.Type,
+			Type:   pb.LinkType(v.Type),
 			Url:    v.Url,
 			UserId: v.UserId.String(),
 		})
