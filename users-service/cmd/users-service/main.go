@@ -43,5 +43,5 @@ func main() {
 		}
 	}(f)
 
-	logrusLogger := logger.NewLogrusAdapter(initializeLogger(f))
+	_ = logger.NewLogrusAdapter(initializeLogger(f))
 }

@@ -31,7 +31,7 @@ func (s UsersService) DeleteUserLink(userId uuid.UUID, id uuid.UUID) error {
 		}
 	}()
 
-	link, err := tx.GetUserLink(id)
+	link, err := tx.GetUserLink(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -40,6 +40,6 @@ func (s UsersService) DeleteUserLink(userId uuid.UUID, id uuid.UUID) error {
 		return errors.New("user service: user id does not match with link user id")
 	}
 
-	err = tx.DeleteUserLink(id)
+	err = tx.DeleteUserLink(ctx, id)
 	return err
 }

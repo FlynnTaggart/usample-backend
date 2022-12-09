@@ -6,11 +6,16 @@ import (
 )
 
 func (s UsersService) CreateUser(user *models.User) error {
-	return s.DB.CreateUser(user)
+	_, err := s.DB.GetUser(user.Id)
+	if err == nil {
+		return s.DB.UpdateUserInfo(user)
+	} else {
+		return s.DB.CreateUser(user)
+	}
 }
 
-func (s UsersService) GetUsers(limit, offset int64) ([]*models.User, error) {
-	res, err := s.DB.GetUsers(limit, offset)
+func (s UsersService) GetUsers(limit, page int64) ([]*models.User, error) {
+	res, err := s.DB.GetUsers(limit, page)
 	return res, err
 }
 

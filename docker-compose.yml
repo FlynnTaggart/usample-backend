@@ -23,6 +23,16 @@ services:
     ports:
       - "6379:6379"
 
+  database:
+    image: postgres:alpine
+    env_file: postgres/.env
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres/init/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db:/var/lib/postgresql/data
+
   api-gateway:
     build:
       context: api-gateway-service
@@ -43,6 +53,17 @@ services:
     ports:
       - "13371:13371"
 
+  users:
+    build:
+      context: users-service
+      dockerfile: Dockerfile
+    image: usample-users
+    restart: always
+    env_file: users-service/.env
+    ports:
+      - "13372:13372"
+
 
 volumes:
   redis_data:
+  db:
