@@ -31,7 +31,7 @@ func (s UsersServer) CreateUser(_ context.Context, req *pb.User) (*pb.DefaultRes
 
 	if err != nil {
 		return &pb.DefaultResponse{
-			Status: http.StatusBadGateway,
+			Status: http.StatusInternalServerError,
 			Error:  err.Error(),
 		}, nil
 	}
@@ -47,7 +47,7 @@ func (s UsersServer) GetUsers(_ context.Context, req *pb.GetUsersRequest) (*pb.U
 	res, err := s.service.GetUsers(limit, offset)
 	if err != nil {
 		return &pb.UsersResponse{
-			Status: http.StatusBadGateway,
+			Status: http.StatusInternalServerError,
 			Error:  err.Error(),
 		}, nil
 	}
@@ -83,7 +83,7 @@ func (s UsersServer) GetUser(_ context.Context, req *pb.GetUserRequest) (*pb.Use
 	res, err := s.service.GetUser(id)
 	if err != nil {
 		return &pb.UserResponse{
-			Status: http.StatusBadGateway,
+			Status: http.StatusInternalServerError,
 			Error:  err.Error(),
 		}, nil
 	}
@@ -107,7 +107,7 @@ func (s UsersServer) GetUsersByNicknamePrefix(_ context.Context, req *pb.GetUser
 	res, err := s.service.GetUsersByNicknamePrefix(prefix, limit, offset)
 	if err != nil {
 		return &pb.UsersResponse{
-			Status: http.StatusBadGateway,
+			Status: http.StatusInternalServerError,
 			Error:  err.Error(),
 		}, nil
 	}
@@ -142,7 +142,7 @@ func (s UsersServer) GetUserByNickname(_ context.Context, req *pb.GetUserByNickn
 	res, err := s.service.GetUserByNickname(req.GetNickname())
 	if err != nil {
 		return &pb.UserResponse{
-			Status: http.StatusBadGateway,
+			Status: http.StatusInternalServerError,
 			Error:  err.Error(),
 		}, nil
 	}
@@ -182,7 +182,7 @@ func (s UsersServer) UpdateUserInfo(_ context.Context, req *pb.User) (*pb.Defaul
 	err = s.service.UpdateUserInfo(user)
 	if err != nil {
 		return &pb.DefaultResponse{
-			Status: http.StatusBadGateway,
+			Status: http.StatusInternalServerError,
 			Error:  err.Error(),
 		}, nil
 	}

@@ -19,7 +19,7 @@ func (s UsersServer) GetUserFriends(_ context.Context, req *pb.GetUserFriendsReq
 	res, err := s.service.GetUserFriends(id)
 	if err != nil {
 		return &pb.GetUserFriendsResponse{
-			Status: http.StatusBadGateway,
+			Status: http.StatusInternalServerError,
 			Error:  err.Error(),
 		}, nil
 	}
@@ -53,7 +53,7 @@ func (s UsersServer) GetUserSentFriends(_ context.Context, req *pb.GetUserFriend
 	res, err := s.service.GetUserSentFriends(id)
 	if err != nil {
 		return &pb.GetUserFriendsResponse{
-			Status: http.StatusBadGateway,
+			Status: http.StatusInternalServerError,
 			Error:  err.Error(),
 		}, nil
 	}
@@ -87,7 +87,7 @@ func (s UsersServer) GetUserReceivedFriends(_ context.Context, req *pb.GetUserFr
 	res, err := s.service.GetUserReceivedFriends(id)
 	if err != nil {
 		return &pb.GetUserFriendsResponse{
-			Status: http.StatusBadGateway,
+			Status: http.StatusInternalServerError,
 			Error:  err.Error(),
 		}, nil
 	}
@@ -135,7 +135,7 @@ func (s UsersServer) SendFriend(_ context.Context, req *pb.SendFriendRequest) (*
 	res, err := s.service.SendFriend(senderId, receiverId)
 	if err != nil {
 		return &pb.SendFriendResponse{
-			Status: http.StatusBadGateway,
+			Status: http.StatusInternalServerError,
 			Error:  err.Error(),
 		}, nil
 	}
@@ -170,7 +170,7 @@ func (s UsersServer) AcceptFriend(_ context.Context, req *pb.AcceptDeclineFriend
 	err = s.service.AcceptFriend(userId, requestId)
 	if err != nil {
 		return &pb.DefaultResponse{
-			Status: http.StatusBadGateway,
+			Status: http.StatusInternalServerError,
 			Error:  err.Error(),
 		}, nil
 	}
@@ -199,7 +199,7 @@ func (s UsersServer) DeclineFriend(_ context.Context, req *pb.AcceptDeclineFrien
 	err = s.service.DeclineFriend(userId, requestId)
 	if err != nil {
 		return &pb.DefaultResponse{
-			Status: http.StatusBadGateway,
+			Status: http.StatusInternalServerError,
 			Error:  err.Error(),
 		}, nil
 	}
@@ -228,7 +228,7 @@ func (s UsersServer) Unfriend(_ context.Context, req *pb.UnfriendRequest) (*pb.D
 	err = s.service.Unfriend(senderId, receiverId)
 	if err != nil {
 		return &pb.DefaultResponse{
-			Status: http.StatusBadGateway,
+			Status: http.StatusInternalServerError,
 			Error:  err.Error(),
 		}, nil
 	}

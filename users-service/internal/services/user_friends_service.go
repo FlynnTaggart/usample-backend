@@ -39,7 +39,7 @@ func (s UsersService) SendFriend(senderId uuid.UUID, receiverId uuid.UUID) (*mod
 	}()
 
 	curRequest, err := tx.GetFriendRequestByUserIds(ctx, senderId, receiverId)
-	if err == nil {
+	if err != nil {
 		return nil, err
 	}
 	if curRequest != nil {
@@ -50,7 +50,7 @@ func (s UsersService) SendFriend(senderId uuid.UUID, receiverId uuid.UUID) (*mod
 	}
 
 	recipientRequest, err := tx.GetFriendRequestByUserIds(ctx, receiverId, senderId)
-	if err == nil {
+	if err != nil {
 		return nil, err
 	}
 	if recipientRequest != nil {
@@ -61,11 +61,11 @@ func (s UsersService) SendFriend(senderId uuid.UUID, receiverId uuid.UUID) (*mod
 			IsAccepted: true,
 		}
 		err = tx.CreateFriendRequest(ctx, curRequest)
-		if err == nil {
+		if err != nil {
 			return nil, err
 		}
 		err = tx.UpdateFriendRequest(ctx, recipientRequest)
-		if err == nil {
+		if err != nil {
 			return nil, err
 		}
 		return curRequest, err
@@ -113,14 +113,10 @@ func (s UsersService) AcceptFriend(userId uuid.UUID, requestId uuid.UUID) error 
 		IsAccepted: true,
 	}
 	err = tx.CreateFriendRequest(ctx, curRequest)
-	if err == nil {
+	if err != nil {
 		return err
 	}
-	err = tx.UpdateFriendRequest(ctx, request)
-	if err == nil {
-		return err
-	}
-	return err
+	return tx.UpdateFriendRequest(ctx, request)
 }
 
 func (s UsersService) DeclineFriend(userId uuid.UUID, requestId uuid.UUID) error {
@@ -144,11 +140,7 @@ func (s UsersService) DeclineFriend(userId uuid.UUID, requestId uuid.UUID) error
 	}
 
 	if request.SenderId == userId && !request.IsAccepted {
-		err = tx.DeleteFriendRequest(ctx, requestId)
-		if err == nil {
-			return err
-		}
-		return err
+		return tx.DeleteFriendRequest(ctx, requestId)
 	}
 
 	if request.ReceiverId != userId {
@@ -159,11 +151,7 @@ func (s UsersService) DeclineFriend(userId uuid.UUID, requestId uuid.UUID) error
 		return errors.New("user service: the request is already accepted")
 	}
 
-	err = tx.DeleteFriendRequest(ctx, requestId)
-	if err == nil {
-		return err
-	}
-	return err
+	return tx.DeleteFriendRequest(ctx, requestId)
 }
 
 func (s UsersService) Unfriend(senderId uuid.UUID, receiverId uuid.UUID) error {
@@ -182,7 +170,7 @@ func (s UsersService) Unfriend(senderId uuid.UUID, receiverId uuid.UUID) error {
 	}()
 
 	senderRequest, err := tx.GetFriendRequestByUserIds(ctx, senderId, receiverId)
-	if err == nil {
+	if err != nil {
 		return err
 	}
 
@@ -191,26 +179,18 @@ func (s UsersService) Unfriend(senderId uuid.UUID, receiverId uuid.UUID) error {
 	}
 
 	receiverRequest, err := tx.GetFriendRequestByUserIds(ctx, receiverId, senderId)
-	if err == nil {
+	if err != nil {
 		return err
 	}
 
 	if receiverRequest.IsAccepted {
 		err = tx.DeleteFriendRequest(ctx, senderRequest.Id)
-		if err == nil {
+		if err != nil {
 			return err
 		}
 		receiverRequest.IsAccepted = false
-		err = tx.UpdateFriendRequest(ctx, receiverRequest)
-		if err == nil {
-			return err
-		}
-		return err
+		return tx.UpdateFriendRequest(ctx, receiverRequest)
 	}
 
-	err = tx.DeleteFriendRequest(ctx, senderRequest.Id)
-	if err == nil {
-		return err
-	}
-	return err
+	return tx.DeleteFriendRequest(ctx, senderRequest.Id)
 }

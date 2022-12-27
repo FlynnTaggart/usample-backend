@@ -26,7 +26,7 @@ func (s UsersServer) AddUserLink(_ context.Context, req *pb.UserLink) (*pb.Defau
 	err = s.service.AddUserLink(link)
 	if err != nil {
 		return &pb.DefaultResponse{
-			Status: http.StatusBadGateway,
+			Status: http.StatusInternalServerError,
 			Error:  err.Error(),
 		}, nil
 	}
@@ -40,7 +40,7 @@ func (s UsersServer) GetUserLinks(_ context.Context, req *pb.GetUserLinksRequest
 	res, err := s.service.GetUserLinks()
 	if err != nil {
 		return &pb.UserLinksResponse{
-			Status: http.StatusBadGateway,
+			Status: http.StatusInternalServerError,
 			Error:  err.Error(),
 		}, nil
 	}
@@ -81,7 +81,7 @@ func (s UsersServer) DeleteUserLink(_ context.Context, req *pb.DeleteUserLinkReq
 	err = s.service.DeleteUserLink(userId, linkId)
 	if err != nil {
 		return &pb.DefaultResponse{
-			Status: http.StatusBadGateway,
+			Status: http.StatusInternalServerError,
 			Error:  err.Error(),
 		}, nil
 	}

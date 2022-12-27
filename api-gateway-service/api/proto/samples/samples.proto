@@ -8,12 +8,13 @@ import "api/proto/default.proto";
 
 service SamplesService {
   rpc UploadSample(stream UploadSampleRequest) returns (default.DefaultResponse) {}
-  rpc GetSampleData(GetSampleRequest) returns (SampleData) {}
-  rpc GetSampleFile(GetSampleRequest) returns (stream SampleFile) {}
+  rpc GetSampleData(GetSampleRequest) returns (GetSampleDataResponse) {}
+  rpc GetSampleFile(GetSampleRequest) returns (stream GetSampleFileResponse) {}
   rpc GetSamples(GetSamplesRequest) returns (GetSamplesResponse) {}
   rpc GetSamplesByNamePrefix(GetSamplesByNamePrefixRequest) returns (GetSamplesResponse) {}
   rpc EditSampleInfo(SampleData) returns (default.DefaultResponse) {}
   rpc DeleteSample(SampleIdRequest) returns (default.DefaultResponse) {}
+  rpc GetUserSamples(GetUserSamplesRequest) returns (GetSamplesResponse) {}
 
   rpc UploadCover(stream CoverStream) returns (default.DefaultResponse) {}
   rpc GetCoverById(CoverIdRequest) returns (stream CoverStream) {}
@@ -30,7 +31,7 @@ service SamplesService {
   rpc GetSampleLikes(GetLikesRequest) returns (LikesResponse) {}
 
   rpc AddCommentToSample(Comment) returns (default.DefaultResponse){}
-  rpc AddCommentToComment(Comment) returns (default.DefaultResponse) {}
+  rpc GetAllCommentsFromSample(SampleIdRequest) returns (GetAllCommentsFromSampleResponse){}
   rpc DeleteComment(CommentIdRequest) returns (default.DefaultResponse) {}
   rpc EditComment(CommentIdRequest) returns (default.DefaultResponse) {}
 
@@ -45,6 +46,18 @@ enum SampleAccessType {
   ALL = 0;
   FRIENDS = 1;
   PRIVATE = 2;
+}
+
+message GetSampleDataResponse {
+  int64 status = 1;
+  string error = 2;
+  SampleData sample_data = 3;
+}
+
+message GetSampleFileResponse {
+  int64 status = 1;
+  string error = 2;
+  SampleFile sample_file = 3;
 }
 
 message SampleData {
@@ -101,6 +114,10 @@ message GetSamplesByNamePrefixRequest{
 message SampleIdRequest {
   string id = 1;
   string author_id = 2;
+}
+
+message GetUserSamplesRequest {
+  string user_id = 2;
 }
 
 // Covers
@@ -182,6 +199,12 @@ message ToggleCommentLikeRequest {
 
 message CommentIdRequest {
   string id = 1;
+}
+
+message GetAllCommentsFromSampleResponse {
+  int64 status = 1;
+  string error = 2;
+  repeated Comment comments = 3;
 }
 
 message GetLikesRequest {

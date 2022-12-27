@@ -22,6 +22,7 @@ func InitializeUsersRoutes(a fiber.Router, URL string, logger logger.Logger, aut
 	getUsersGroup.Get("/prefix", svc.GetUsersByNicknamePrefix)
 	getUsersGroup.Get("/nickname", svc.GetUserByNickname)
 	getUsersGroup.Get("/:id/friends", svc.GetUserFriends)
+	getUsersGroup.Get("/:id/links", svc.GetUserLinks)
 
 	protectedUsersGroup := getUsersGroup.Group("/protected", m.AuthRequired)
 	protectedUsersGroup.Post("/", svc.CreateUser)
@@ -29,7 +30,6 @@ func InitializeUsersRoutes(a fiber.Router, URL string, logger logger.Logger, aut
 
 	userLinkGroup := protectedUsersGroup.Group("/links")
 	userLinkGroup.Post("/", svc.AddUserLink)
-	userLinkGroup.Get("/", svc.GetUserLinks)
 	userLinkGroup.Delete("/", svc.DeleteUserLink)
 
 	userFriendsGroup := protectedUsersGroup.Group("/friends")

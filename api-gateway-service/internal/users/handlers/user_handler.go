@@ -35,7 +35,7 @@ func CreateUser(ctx *fiber.Ctx, client users_pb.UsersServiceClient) error {
 	res, err := client.CreateUser(context.Background(), &body)
 
 	if err != nil {
-		return utils.ReturnBadRequest(err, ctx, fiber.StatusBadGateway)
+		return utils.ReturnBadRequest(err, ctx, fiber.StatusInternalServerError)
 	}
 
 	return ctx.SendStatus(int(res.Status))
@@ -51,7 +51,7 @@ func GetUsers(ctx *fiber.Ctx, client users_pb.UsersServiceClient) error {
 	res, err := client.GetUsers(context.Background(), &body)
 
 	if err != nil {
-		return utils.ReturnBadRequest(err, ctx, fiber.StatusBadRequest)
+		return utils.ReturnBadRequest(err, ctx, fiber.StatusInternalServerError)
 	}
 
 	return ctx.Status(int(res.Status)).JSON(res)
@@ -69,7 +69,7 @@ func GetUser(ctx *fiber.Ctx, client users_pb.UsersServiceClient) error {
 	})
 
 	if err != nil {
-		return utils.ReturnBadRequest(err, ctx, fiber.StatusBadRequest)
+		return utils.ReturnBadRequest(err, ctx, fiber.StatusInternalServerError)
 	}
 
 	return ctx.Status(int(res.Status)).JSON(res)
@@ -85,7 +85,7 @@ func GetUsersByNicknamePrefix(ctx *fiber.Ctx, client users_pb.UsersServiceClient
 	res, err := client.GetUsersByNicknamePrefix(context.Background(), &body)
 
 	if err != nil {
-		return utils.ReturnBadRequest(err, ctx, fiber.StatusBadRequest)
+		return utils.ReturnBadRequest(err, ctx, fiber.StatusInternalServerError)
 	}
 
 	return ctx.Status(int(res.Status)).JSON(res)
@@ -105,7 +105,7 @@ func GetUserByNickname(ctx *fiber.Ctx, client users_pb.UsersServiceClient) error
 	res, err := client.GetUserByNickname(context.Background(), &body)
 
 	if err != nil {
-		return utils.ReturnBadRequest(err, ctx, fiber.StatusBadRequest)
+		return utils.ReturnBadRequest(err, ctx, fiber.StatusInternalServerError)
 	}
 
 	return ctx.Status(int(res.Status)).JSON(res)
@@ -130,7 +130,7 @@ func UpdateUserInfo(ctx *fiber.Ctx, client users_pb.UsersServiceClient) error {
 	res, err := client.UpdateUserInfo(context.Background(), &body)
 
 	if err != nil {
-		return utils.ReturnBadRequest(err, ctx, fiber.StatusBadRequest)
+		return utils.ReturnBadRequest(err, ctx, fiber.StatusInternalServerError)
 	}
 
 	return ctx.SendStatus(int(res.Status))
