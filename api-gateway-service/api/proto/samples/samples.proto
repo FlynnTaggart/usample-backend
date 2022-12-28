@@ -117,7 +117,8 @@ message SampleIdRequest {
 }
 
 message GetUserSamplesRequest {
-  string user_id = 2;
+  string user_id = 1;
+  string author_id = 2;
 }
 
 // Covers
